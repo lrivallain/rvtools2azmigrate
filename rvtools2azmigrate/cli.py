@@ -34,22 +34,27 @@ def cli(debug):
     required=True,
     type=click.Path(exists=True),
 )
-@click.option(
-    "-o", "--output", help="Ouptut file", required=True, type=click.Path(exists=False)
-)
+@click.option("-o", "--output", help="Ouptut file", required=True, type=click.Path(exists=False))
 @click.option(
     "--anonymized",
     default=False,
     is_flag=True,
     help="Anonymize the output file by replacing VM names with UUIDs",
 )
-def convert(rvtools: str, output: str, anonymized: bool):
+@click.option(
+    "--mib",
+    default=False,
+    is_flag=True,
+    help="RVtools file is in MiB instead of MB for disk capacity",
+)
+def convert(rvtools: str, output: str, anonymized: bool, mib: bool):
     """Convert RVTools file to Azure Migrate format"""
     log.info("Starting RVTools file conversion to Azure Migrate format...")
     log.debug(f"Input file: {click.format_filename(rvtools)}")
     log.debug(f"Output file: {click.format_filename(output)}")
     log.debug(f"Anonymized: {anonymized}")
-    convert_rvtools_to_azmigrate(rvtools, output, anonymized)
+    log.debug(f"Use MiB instead of MB: {mib}")
+    convert_rvtools_to_azmigrate(rvtools=rvtools, output=output, anonymized=anonymized, mib=mib)
     return 0
 
 

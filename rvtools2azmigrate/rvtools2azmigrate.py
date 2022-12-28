@@ -9,7 +9,7 @@ from openpyxl.utils import get_column_letter
 log = logging.getLogger(__name__)
 
 VINFO_SHEET_NAME = "vInfo"
-STORAGE_COLUMN_NAME = "Provisioned MB"
+STORAGE_COLUMN_NAME = "Provisioned"
 DEFAULT_OS_NAME = "Windows Server 2019 Datacenter"
 
 
@@ -29,9 +29,7 @@ def get_column_data_by_name(ws, column_name: str):
     log.error(f"Column {column_name} not found")
 
 
-def get_unique_vm_name(
-    vm_name_already_used: list, dns_name: str, uuid: str, index: int
-) -> str:
+def get_unique_vm_name(vm_name_already_used: list, dns_name: str, uuid: str, index: int) -> str:
     """Get unique VM name
 
     Args:
@@ -50,18 +48,17 @@ def get_unique_vm_name(
         return vm_name
     else:
         # If VM name is already used, add index to the name
-        log.warning(
-            f"VM name {vm_name} already used, adding index to the name: {vm_name}-{index}"
-        )
+        log.warning(f"VM name {vm_name} already used, adding index to the name: {vm_name}-{index}")
         return f"{vm_name}-{index}"
 
 
-def build_azmigrate_data(rvtools_data: dict, anonymized: bool) -> list():
+def build_azmigrate_data(rvtools_data: dict, anonymized: bool, mib: bool) -> list():
     """Build Azure Migrate file
 
     Args:
         rvtools_data (dict): RVTools data as a dict
         anonymized (bool): Anonymize the output data
+        mib (bool): RVTools file is in MiB instead of MB for disk and memory
 
     return:
         list(): data for the Azure Migrate file
@@ -109,7 +106,10 @@ def build_azmigrate_data(rvtools_data: dict, anonymized: bool) -> list():
         else:
             vm_data["Boot type"] = "BIOS"
         vm_data["Number of disks"] = ""
-        vm_data["Disk 1 size (In GB)"] = int(rvtools_data["storage_capacity"][i] / 1024)
+        if mib:
+            vm_data["Disk 1 size (In GB)"] = int((rvtools_data["storage_capacity"][i] / 1.04858) / 1024)
+        else:
+            vm_data["Disk 1 size (In GB)"] = int(rvtools_data["storage_capacity"][i] / 1024)
         vm_data["Disk 1 read throughput (MB per second)"] = ""
         vm_data["Disk 1 write throughput (MB per second)"] = ""
         vm_data["Disk 1 read ops (operations per second)"] = ""
@@ -137,38 +137,39 @@ def write_azmigrate_file(azmigrate_data: list, output: str):
             writer.writerow(vm_data)
 
 
-def convert_rvtools_to_azmigrate(rvtools: str, output: str, anonymized: bool):
+def convert_rvtools_to_azmigrate(rvtools: str, output: str, anonymized: bool, mib: bool):
     """Convert RVTools file to Azure Migrate format
 
     Args:
         rvtools (str): Input file in RVTools format
         output (str): Output file in Azure Migrate CSV format
         anonymized (bool): Anonymize VM names
+        mib (bool): Use MiB instead of GB for storage and memory capacity
     """
-
     wb = load_workbook(filename=rvtools, data_only=True)
     ws = wb[VINFO_SHEET_NAME]
+
+    if mib:
+        log.debug("Using MiB for storage capacity")
+        storage_column_name = STORAGE_COLUMN_NAME + " MiB"
+    else:
+        storage_column_name = STORAGE_COLUMN_NAME + " MB"
+    log.info(f"Using the storage column name: {storage_column_name}")
 
     rvtools_data = {
         "vms_name": get_column_data_by_name(ws, column_name="VM"),
         "power_states": get_column_data_by_name(ws, column_name="Powerstate"),
         "cores": get_column_data_by_name(ws, column_name="CPUs"),
         "memory": get_column_data_by_name(ws, column_name="Memory"),
-        "os_config": get_column_data_by_name(
-            ws, column_name="OS according to the configuration file"
-        ),
-        "os_vmtools": get_column_data_by_name(
-            ws, column_name="OS according to the VMware Tools"
-        ),
-        "storage_capacity": get_column_data_by_name(
-            ws, column_name=STORAGE_COLUMN_NAME
-        ),
+        "os_config": get_column_data_by_name(ws, column_name="OS according to the configuration file"),
+        "os_vmtools": get_column_data_by_name(ws, column_name="OS according to the VMware Tools"),
+        "storage_capacity": get_column_data_by_name(ws, column_name=storage_column_name),
         "dns_name": get_column_data_by_name(ws, column_name="DNS Name"),
         "uuid": get_column_data_by_name(ws, column_name="VM UUID"),
         "firmware": get_column_data_by_name(ws, column_name="Firmware"),
     }
     log.info(f"We have found {len(rvtools_data['vms_name'])} VMs in the file {rvtools}")
-    azmigrate_data = build_azmigrate_data(rvtools_data, anonymized)
+    azmigrate_data = build_azmigrate_data(rvtools_data, anonymized, mib)
     log.info(f"Data for Azure Migrate file built successfully")
     write_azmigrate_file(azmigrate_data, output)
     log.info(f"File {output} created successfully")

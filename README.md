@@ -67,6 +67,7 @@ Options:
   -i, --rvtools PATH  RVTools input file  [required]
   -o, --output PATH   Ouptut file  [required]
   --anonymized        Anonymize the output file by replacing VM names with UUIDs
+  --mib               RVtools file is in MiB instead of MB for disk capacity
   --help              Show this message and exit.
 ```
 
