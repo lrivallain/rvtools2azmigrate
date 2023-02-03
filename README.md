@@ -67,14 +67,24 @@ Options:
   -i, --rvtools PATH  RVTools input file  [required]
   -o, --output PATH   Ouptut file  [required]
   --anonymized        Anonymize the output file by replacing VM names with UUIDs
-  --mib               RVtools file is in MiB instead of MB for disk capacity
+  --filter-off-vms    Filter the powered-off VMs
   --help              Show this message and exit.
 ```
 
-### Example
+### Examples
+
+#### Anonymized
 
 ```bash
 rvtools2azmigrate convert -i rvtools.xlsx -o azuremigrate.csv --anonymized
 ```
 
-This will provide a CSV file to be imported in Azure Migrate manual discovery section.
+This will provide a CSV file to be imported in Azure Migrate manual discovery section. VMs names will be replaced by their UUID to anonymize the content of the exported file.
+
+#### Filter off VMs
+
+```bash
+rvtools2azmigrate convert -i rvtools.xlsx -o azuremigrate.csv --filter-off-vms
+```
+
+This will provide a CSV file to be imported in Azure Migrate manual discovery section. Powered-Off VMs will not be exported to the CSV file.

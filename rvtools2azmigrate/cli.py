@@ -42,19 +42,19 @@ def cli(debug):
     help="Anonymize the output file by replacing VM names with UUIDs",
 )
 @click.option(
-    "--mib",
+    "--filter-off-vms",
     default=False,
     is_flag=True,
-    help="RVtools file is in MiB instead of MB for disk capacity",
+    help="Filter the powered-off VMs",
 )
-def convert(rvtools: str, output: str, anonymized: bool, mib: bool):
+def convert(rvtools: str, output: str, anonymized: bool, filter_off_vms: bool):
     """Convert RVTools file to Azure Migrate format"""
     log.info("Starting RVTools file conversion to Azure Migrate format...")
     log.debug(f"Input file: {click.format_filename(rvtools)}")
     log.debug(f"Output file: {click.format_filename(output)}")
     log.debug(f"Anonymized: {anonymized}")
-    log.debug(f"Use MiB instead of MB: {mib}")
-    convert_rvtools_to_azmigrate(rvtools=rvtools, output=output, anonymized=anonymized, mib=mib)
+    log.debug(f"Filter powered-off VMs: {filter_off_vms}")
+    convert_rvtools_to_azmigrate(rvtools=rvtools, output=output, anonymized=anonymized, filter_off_vms=filter_off_vms)
     return 0
 
 
