@@ -11,6 +11,12 @@ Convert an [RVTools](https://www.robware.net/rvtools/) export to an [Azure Migra
 
 # Installation
 
+## Using `PIP`
+
+```bash
+pip install rvtools2azmigrate
+```
+
 ## From sources
 
 The sources for `rvtools2azmigrate` can be downloaded from the [`Github repo`](https://github.com/lrivallain/rvtools2azmigrate).
