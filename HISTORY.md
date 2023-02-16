@@ -1,5 +1,9 @@
 # History
 
+## 0.1.2 (2023-02-16)
+
+* Fix import issue when used as installed module
+
 ## 0.1.1 (2023-02-03)
 
 * Filter Powered-off VMs
