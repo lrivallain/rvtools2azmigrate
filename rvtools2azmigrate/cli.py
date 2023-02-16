@@ -4,7 +4,7 @@ import click
 import logging
 from rich.logging import RichHandler
 
-from rvtools2azmigrate import convert_rvtools_to_azmigrate
+from rvtools2azmigrate.convert import convert_rvtools_to_azmigrate
 
 
 LOG_FORMAT = "%(message)s"

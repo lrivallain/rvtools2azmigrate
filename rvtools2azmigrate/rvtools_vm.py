@@ -1,7 +1,7 @@
 import logging
 
-from config import DEFAULT_OS_NAME, MIB_TO_MB_CONVERSION_FACTOR
-from azmigrate_vm import AzMigrateVM
+from rvtools2azmigrate.config import DEFAULT_OS_NAME, MIB_TO_MB_CONVERSION_FACTOR
+from rvtools2azmigrate.azmigrate_vm import AzMigrateVM
 
 log = logging.getLogger(__name__)
 

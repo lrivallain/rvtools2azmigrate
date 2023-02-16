@@ -5,8 +5,8 @@ import csv
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 
-from config import VINFO_SHEET_NAME, STORAGE_COLUMN_NAME
-from rvtools_vm import RvToolsVM
+from rvtools2azmigrate.config import VINFO_SHEET_NAME, STORAGE_COLUMN_NAME
+from rvtools2azmigrate.rvtools_vm import RvToolsVM
 
 log = logging.getLogger(__name__)
 

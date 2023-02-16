@@ -8,6 +8,7 @@ Convert an [RVTools](https://www.robware.net/rvtools/) export to an [Azure Migra
 
 * Convert an RVTools export to an Azure Migrate CSV inventory file
 * Anonymize the VM data by replacing the hostname with UUIDs
+* Filter powered-off VMs
 
 # Installation
 
