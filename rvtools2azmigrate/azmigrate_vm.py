@@ -23,7 +23,7 @@ class AzMigrateVM:
             boot_type (str): Boot type of the server
             disk1_size (int): Disk size of the server (GB)
         """
-        self.server_name = server_name
+        self.server_name = server_name.replace(' ', '-').replace('_', '-').replace('.', '-').replace(',', '-')
         self.cores = cores
         self.memory = memory
         self.os = os
