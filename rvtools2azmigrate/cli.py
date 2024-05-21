@@ -34,7 +34,7 @@ def cli(debug):
     required=True,
     type=click.Path(exists=True),
 )
-@click.option("-o", "--output", help="Ouptut file", required=True, type=click.Path(exists=False))
+@click.option("-o", "--output", help="Output file", required=True, type=click.Path(exists=False))
 @click.option(
     "--anonymized",
     default=False,
@@ -56,6 +56,26 @@ def convert(rvtools: str, output: str, anonymized: bool, filter_off_vms: bool):
     log.debug(f"Filter powered-off VMs: {filter_off_vms}")
     convert_rvtools_to_azmigrate(rvtools=rvtools, output=output, anonymized=anonymized, filter_off_vms=filter_off_vms)
     return 0
+
+
+# @cli.command()  # @cli, not @click!
+# @click.option(
+#     "-i",
+#     "--azmigrate-export",
+#     help="Azure Migrate export file",
+#     required=True,
+#     type=click.Path(exists=True),
+# )
+# @click.option("-o", "--output", help="Output file", required=True, type=click.Path(exists=False))
+# def reverse(azmigrate_export: str, output: str):
+#     """Convert Azure Migrate export format to RVTools like file"""
+#     log.info("Starting RVTools file conversion to Azure Migrate format...")
+#     log.debug(f"Input file: {click.format_filename(rvtools)}")
+#     log.debug(f"Output file: {click.format_filename(output)}")
+#     log.debug(f"Anonymized: {anonymized}")
+#     log.debug(f"Filter powered-off VMs: {filter_off_vms}")
+#     convert_rvtools_to_azmigrate(rvtools=rvtools, output=output, anonymized=anonymized, filter_off_vms=filter_off_vms)
+#     return 0
 
 
 if __name__ == "__main__":

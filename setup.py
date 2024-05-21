@@ -15,6 +15,7 @@ requirements = [
     "Click",
     "openpyxl",
     "rich",
+    "python-slugify",
 ]
 
 setup_requirements = []

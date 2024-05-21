@@ -3,6 +3,8 @@
 
 import logging
 
+from slugify import slugify
+
 log = logging.getLogger(__name__)
 
 
@@ -23,7 +25,7 @@ class AzMigrateVM:
             boot_type (str): Boot type of the server
             disk1_size (int): Disk size of the server (GB)
         """
-        self.server_name = server_name.replace(' ', '-').replace('_', '-').replace('.', '-').replace(',', '-')
+        self.server_name = slugify(server_name)[:20] # first 20 characters
         self.cores = cores
         self.memory = memory
         self.os = os
