@@ -28,21 +28,26 @@ def get_column_data_by_name(ws, column_name: str, default=None):
     return None
 
 
-def get_rvtools_vms(rvtools_data: dict, anonymized: bool, filter_off_vms: bool) -> list():
+def get_rvtools_vms(rvtools_data: dict, anonymized: bool, filter_off_vms: bool, filter_out: list[str]) -> list():
     """Get a list of RvToolsVM objects based on the RVTools data
 
     Args:
         rvtools_data (dict): RVTools data as a dict
         anonymized (bool): Anonymize the output data ?
         filter_off_vms (bool): Filter the powered-off VMs
+        filter_out (list): List of VM naming patterns to filter out (contains)
 
     Returns:
         list(): List of RvToolsVM objects
     """
     rvtools_vms = []
     nb_vms = len(rvtools_data["vms_name"])
-    vm_name_already_used = []
     for i in range(nb_vms):
+        # Filtering out VMs based on provided patterns
+        for fout_pattern in filter_out:
+            if fout_pattern.lower() in rvtools_data["vms_name"][i].lower():
+                log.debug(f"Filtered out VM {rvtools_data['vms_name'][i]} based on pattern {fout_pattern}")
+                break
         rv_vm = RvToolsVM(
             is_anonymized=anonymized,
             name=rvtools_data["vms_name"][i],
@@ -133,7 +138,7 @@ def parse_rvtools_data(rvtools: str) -> dict:
     }
 
 
-def convert_rvtools_to_azmigrate(rvtools: str, output: str, anonymized: bool, filter_off_vms: bool):
+def convert_rvtools_to_azmigrate(rvtools: str, output: str, anonymized: bool, filter_off_vms: bool, filter_out: list[str]):
     """Convert RVTools file to Azure Migrate format
 
     Args:
@@ -141,13 +146,14 @@ def convert_rvtools_to_azmigrate(rvtools: str, output: str, anonymized: bool, fi
         output (str): Output file in Azure Migrate CSV format
         anonymized (bool): Anonymize VM names
         filter_off_vms (bool): Filter the powered-off VMs
+        filter_out (list): List of VM naming patterns to filter out (contains)
     """
     # Read data from RVTools file
     rvtools_data = parse_rvtools_data(rvtools)
     log.info(f"We have found {len(rvtools_data['vms_name'])} VMs in the file {rvtools}")
 
     # Create a list of VMs
-    rvtools_vms = get_rvtools_vms(rvtools_data, anonymized, filter_off_vms)
+    rvtools_vms = get_rvtools_vms(rvtools_data, anonymized, filter_off_vms, filter_out)
     log.info(f"VM data set from RVtools was built successfully")
 
     # Export VMs to an AZ migrate CSV file

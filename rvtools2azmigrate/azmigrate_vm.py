@@ -25,7 +25,8 @@ class AzMigrateVM:
             boot_type (str): Boot type of the server
             disk1_size (int): Disk size of the server (GB)
         """
-        self.server_name = slugify(server_name)[:20] # first 20 characters
+        # slugify the server name to avoid special characters and limit the length
+        self.server_name = slugify(server_name, lowercase=False, max_length=25)
         self.cores = cores
         self.memory = memory
         self.os = os

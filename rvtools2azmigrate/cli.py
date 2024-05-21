@@ -26,7 +26,7 @@ def cli(debug):
     return 0
 
 
-@cli.command()  # @cli, not @click!
+@cli.command()
 @click.option(
     "-i",
     "--rvtools",
@@ -47,35 +47,23 @@ def cli(debug):
     is_flag=True,
     help="Filter the powered-off VMs",
 )
-def convert(rvtools: str, output: str, anonymized: bool, filter_off_vms: bool):
+@click.option(
+    "--filter-out",
+    default=[],
+    multiple=True,
+    help="Filter out VMs based on the provided patterns (contains + case-insensitive)",
+)
+def convert(rvtools: str, output: str, anonymized: bool, filter_off_vms: bool, filter_out: list[str]):
     """Convert RVTools file to Azure Migrate format"""
     log.info("Starting RVTools file conversion to Azure Migrate format...")
     log.debug(f"Input file: {click.format_filename(rvtools)}")
     log.debug(f"Output file: {click.format_filename(output)}")
     log.debug(f"Anonymized: {anonymized}")
     log.debug(f"Filter powered-off VMs: {filter_off_vms}")
-    convert_rvtools_to_azmigrate(rvtools=rvtools, output=output, anonymized=anonymized, filter_off_vms=filter_off_vms)
+    if filter_out:
+        log.debug(f"Filter VMs with following patterns: {", ".join(filter_out)}")
+    convert_rvtools_to_azmigrate(rvtools=rvtools, output=output, anonymized=anonymized, filter_off_vms=filter_off_vms, filter_out=filter_out)
     return 0
-
-
-# @cli.command()  # @cli, not @click!
-# @click.option(
-#     "-i",
-#     "--azmigrate-export",
-#     help="Azure Migrate export file",
-#     required=True,
-#     type=click.Path(exists=True),
-# )
-# @click.option("-o", "--output", help="Output file", required=True, type=click.Path(exists=False))
-# def reverse(azmigrate_export: str, output: str):
-#     """Convert Azure Migrate export format to RVTools like file"""
-#     log.info("Starting RVTools file conversion to Azure Migrate format...")
-#     log.debug(f"Input file: {click.format_filename(rvtools)}")
-#     log.debug(f"Output file: {click.format_filename(output)}")
-#     log.debug(f"Anonymized: {anonymized}")
-#     log.debug(f"Filter powered-off VMs: {filter_off_vms}")
-#     convert_rvtools_to_azmigrate(rvtools=rvtools, output=output, anonymized=anonymized, filter_off_vms=filter_off_vms)
-#     return 0
 
 
 if __name__ == "__main__":

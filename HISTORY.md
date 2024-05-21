@@ -1,5 +1,10 @@
 # History
 
+## 0.2.0 (2024-05-21)
+
+* Feat: Use python-slugify to generate VM names
+* Feat: Filter out VMs based on name with `--filter-out pattern1 --filter-out pattern2`
+
 ## 0.1.3 (2023-10-11)
 
 * Fix #2: Incorrect output if RV Tools input has a VM name with spaces in it

@@ -75,6 +75,7 @@ Options:
   -o, --output PATH   Ouptut file  [required]
   --anonymized        Anonymize the output file by replacing VM names with UUIDs
   --filter-off-vms    Filter the powered-off VMs
+  --filter-out TEXT   Filter out VMs based on the provided patterns (contains + case-insensitive)
   --help              Show this message and exit.
 ```
 
@@ -95,3 +96,17 @@ rvtools2azmigrate convert -i rvtools.xlsx -o azuremigrate.csv --filter-off-vms
 ```
 
 This will provide a CSV file to be imported in Azure Migrate manual discovery section. Powered-Off VMs will not be exported to the CSV file.
+
+
+#### Filter out VMs based on naming
+
+It is possible to specify a list of patterns to filter out VMs based on their name.
+
+```bash
+rvtools2azmigrate convert -i rvtools.xlsx -o azuremigrate.csv \
+  --filter-out pattern1 \
+  --filter-out pattern2 \
+  --filter-out pattern3
+```
+
+This will provide a CSV file to be imported in Azure Migrate manual discovery section. VMs with one of the pattern in their name will be filtered out and not part of the exported file.
